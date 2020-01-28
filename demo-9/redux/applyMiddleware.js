@@ -6,7 +6,10 @@ import compose from './compose';
       const store = oldCreateStore(...args);
       /*给每个 middleware 传下store，相当于 const logger = loggerMiddleware(store);*/
       /* const chain = [exception, time, logger]*/
-      const simpleStore = { getState: store.getState, dispatch: (...args) => store.dispatch(...args) };
+      const simpleStore = { 
+        getState: store.getState, 
+        dispatch: (...args) => store.dispatch(...args) 
+      };
       const chain = middlewares.map(middleware => middleware(simpleStore));
       // let dispatch = store.dispatch;
       // /* 实现 exception(time((logger(dispatch))))*/
