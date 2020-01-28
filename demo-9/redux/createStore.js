@@ -1,13 +1,12 @@
-export default function createStore(reducer, initState, rewriteCreateStoreFunc) {
+export default function createStore(reducer, initState, enhancer) {
 
-  if (typeof initState === 'function' && typeof rewriteCreateStoreFunc === 'undefined') {
-    rewriteCreateStoreFunc = initState;
+  if (typeof initState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = initState;
     initState = undefined;
   }
 
-  if (rewriteCreateStoreFunc) {
-    const newCreateStore = rewriteCreateStoreFunc(createStore);
-    return newCreateStore(reducer, initState);
+  if (enhancer) {
+    return enhancer(createStore)(reducer, initState);
   }
 
   let state = initState;
@@ -23,10 +22,8 @@ export default function createStore(reducer, initState, rewriteCreateStoreFunc) 
 
   function dispatch(action) {
     state = reducer(state, action);
-    for (let i = 0; i < listeners.length; i++) {
-      const listener = listeners[i];
-      listener();
-    }
+    listeners.forEach(listener => listener());
+    return state;
   }
 
   function getState() {
