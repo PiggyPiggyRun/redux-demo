@@ -10,10 +10,7 @@ export default function (reducer, initState) {
   function dispatch(action) {
     /*请按照我的计划修改 state*/
     state = reducer(state, action);
-    for (let i = 0; i < listeners.length; i++) {
-      const listener = listeners[i];
-      listener();
-    }
+    listeners.forEach(listener => listener())
   }
 
   function getState() {
