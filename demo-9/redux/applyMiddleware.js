@@ -1,14 +1,12 @@
 import compose from './compose';
 
-const applyMiddleware = function (...middlewares) {
-  return function (oldCreateStore) {
-    /*生成新的 createStore*/
-    return function newCreateStore(reducer, initState) {
+ export default function applyMiddleware (...middlewares) {
+  return oldCreateStore => (...args) => {
       /*1. 生成store*/
-      const store = oldCreateStore(reducer, initState);
+      const store = oldCreateStore(...args);
       /*给每个 middleware 传下store，相当于 const logger = loggerMiddleware(store);*/
       /* const chain = [exception, time, logger]*/
-      const simpleStore = { getState: store.getState };
+      const simpleStore = { getState: store.getState, dispatch: (...args) => store.dispatch(...args) };
       const chain = middlewares.map(middleware => middleware(simpleStore));
       // let dispatch = store.dispatch;
       // /* 实现 exception(time((logger(dispatch))))*/
@@ -26,7 +24,4 @@ const applyMiddleware = function (...middlewares) {
         dispatch
       }
     }
-  }
 }
-
-export default applyMiddleware;
